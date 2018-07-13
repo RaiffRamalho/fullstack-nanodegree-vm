@@ -1,25 +1,29 @@
 <html>
-
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    </head>
     <body>
 
-        <h1>Genres</h1>
+        
         <a href="{{url_for('newGenre')}}">
 				<button class="btn btn-default" id="new-restaurant">
-					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Add Genre
+					<span class="glyphicon glyphicon-cutlery" aria-hidden="true">Add Genre</span>
 				</button>
 		</a>
         {% for genre in genres %}
         
         <div>
-
-            <p>{{genre.name}}</p>
-                    
+            <div class = 'pane'>
+                    <span class = 'name'><p>{{genre.name}}</p></span>
             </div>
-            <a href='{{url_for('editGenre', genre_id = genre.id) }}'>Edit</a>
 
-            </br>
-            <a href = '{{url_for('deleteGenre', genre_id = genre.id) }}'>Delete</a>
-            
+
+            <div class = "editdeletepane">
+                <a href='{{url_for('editGenre', genre_id = genre.id) }}'>Edit</a>
+                </br>
+                <a href = '{{url_for('deleteGenre', genre_id = genre.id) }}'>Delete</a>
+            </div>
+        </div>
         {% endfor %}
         </body>
 </html>

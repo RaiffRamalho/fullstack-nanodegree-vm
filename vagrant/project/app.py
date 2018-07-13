@@ -12,6 +12,15 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
 
+#JSON for all genders
+@app.route('/genre/<int:genre_id>/JSON')
+def genreJSON(genre_id):
+    session = DBSession()
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    bands = session.query(Band).filter_by(
+        genre_id=genre_id).all()
+    return jsonify(Bands=[band.serialize for band in bands])
+
 
 #home route show all bands
 @app.route('/')
@@ -20,7 +29,6 @@ def showGenre():
     session = DBSession()
     genres = session.query(Genre).all()
     return render_template('music/genres.html', genres=genres)
-
 
 #route to get bands of a genre
 @app.route('/genre/<int:genre_id>/')
@@ -68,16 +76,6 @@ def deleteGenre(genre_id):
     else:
         return render_template('music/deleteconfirmation.html', genre=genreToDelete)
 
-# @app.route('/genre/<int:genre_id>/new/', methods=['GET', 'POST'])
-# def newMenuItem(genre_id):
-#     if request.method == 'POST':
-#         genre = session.query(Genre).filter_by(id=genre_id).one()
-#         newBand = Band(name=request.form['name'], description=request.form['description'], genre_id=genre_id)
-#         session.add(newBand)
-#         session.commit()
-#         return redirect(url_for('genre/bands.html', genre=genre))
-#     else:
-#         return render_template('newmenuitem.html', genre=genre)
 
 
 
