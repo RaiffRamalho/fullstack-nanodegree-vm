@@ -4,16 +4,26 @@
 
 <h1>{{genre.name}}</h1>
 
+<a href="{{url_for('newBand', genre_id=genre.id)}}">
+        <button class="btn btn-default" id="new-restaurant">
+            <span class="glyphicon glyphicon-cutlery" aria-hidden="true">Add Band</span>
+        </button>
+</a>
 
 {% for band in bands %}
 
-<div>
+    <div>
 
-<p>{{band.name}}</p>
+        <p>{{band.name}}</p>
 
-<p>{{band.description}}</p>
+        <p>{{band.description}}</p>
 
-</div>
+    </div>
+    <div class = "editdeletepane">
+        <a href='{{url_for('editBand', genre_id = genre.id,  band_id = band.id) }}'>Edit</a>
+        </br>
+        <a href = '{{url_for('deleteBand', genre_id = genre.id, band_id = band.id) }}'>Delete</a>
+    </div>
 
 
 {% endfor %}

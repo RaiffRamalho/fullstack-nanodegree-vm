@@ -1,0 +1,15 @@
+<html>
+<body>
+<form action= "{{url_for('editBand', genre_id = band.genre_id, band_id = band.id)}}" method = 'POST'>
+
+<p>Name:</p>
+<label for="name">Name:</label>
+		<input type ="text" maxlength="100" class="form-control" name="name" value="{{band.name }}">
+<label for="description">Description:</label>
+		<textarea class="form-control" maxlength="250" rows="3" name="description">{{band.description}}</textarea>
+
+<input type='submit' value='Edit'>
+</form>
+<a href= '{{url_for('showBands', genre_id = band.genre_id)}}'>Cancel</a>
+</body>
+</html>

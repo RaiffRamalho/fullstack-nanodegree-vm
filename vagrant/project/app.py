@@ -21,6 +21,15 @@ def genreJSON(genre_id):
         genre_id=genre_id).all()
     return jsonify(Bands=[band.serialize for band in bands])
 
+#JSON for all genders
+
+#JSON APIs to view Genre Information
+@app.route('/genre/<int:genre_id>/bands/JSON')
+def genreBandsJSON(genre_id):
+    genre = session.query(Genre).filter_by(id = genre_id).one()
+    bands = session.query(Band).filter_by(genre_id = genre_id).all()
+    return jsonify(Bands=[band.serialize for band in bands])
+
 
 #home route show all bands
 @app.route('/')
@@ -76,7 +85,74 @@ def deleteGenre(genre_id):
     else:
         return render_template('music/deleteconfirmation.html', genre=genreToDelete)
 
+#Show a genre bands
+@app.route('/genre/<int:genre_id>/')
+@app.route('/genre/<int:genre_id>/bands/')
+def showBands(genre_id):
+    session = DBSession()
+    genre = session.query(Genre).filter_by(id = genre_id).one()
+    # creator = getUserInfo(genre.user_id)
+    bands = session.query(Band).filter_by(genre_id = genre_id).all()
+    # if 'username' not in login_session or creator.id != login_session['user_id']:
+    #     return render_template('publicmenu.html', bands = bands, genre = genre, creator = creator)
+    # else:
+    #     return render_template('menu.html', bands = bands, genre = genre, creator = creator)
+    return render_template('genre/bands.html', bands = bands, genre = genre)
 
+#Create a new band
+@app.route('/genre/<int:genre_id>/bands/new/',methods=['GET','POST'])
+def newBand(genre_id):
+    session = DBSession()
+
+#   if 'username' not in login_session:
+#       return redirect('/login')
+    genre = session.query(Genre).filter_by(id = genre_id).one()
+    if request.method == 'POST':
+        newBand = Band(name = request.form['name'], description = request.form['description'],
+        genre_id = genre_id,user_id=genre.user_id)
+        session.add(newBand)
+        session.commit()
+        #   flash('New Menu %s Item Successfully Created' % (newBand.name))
+        return redirect(url_for('showBands', genre_id = genre_id))
+    else:
+        return render_template('genre/newBand.html', genre = genre)
+
+
+#Edit a band
+@app.route('/genre/<int:genre_id>/bands/<int:band_id>/edit', methods=['GET','POST'])
+def editBand(genre_id, band_id):
+    session = DBSession()
+    # if 'username' not in login_session:
+    #   return redirect('/login')
+    editedBand = session.query(Band).filter_by(id = band_id).one()
+    genre = session.query(Genre).filter_by(id = genre_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            editedBand.name = request.form['name']
+        if request.form['description']:
+            editedBand.description = request.form['description']
+        session.add(editedBand)
+        session.commit() 
+        # flash('Menu Item Successfully Edited')
+        return redirect(url_for('showBands', genre_id = genre_id))
+    else:
+        return render_template('genre/editBand.html', genre_id = genre_id, band = editedBand)
+
+#Delete a band
+@app.route('/genre/<int:genre_id>/bands/<int:band_id>/delete', methods = ['GET','POST'])
+def deleteBand(genre_id,band_id):
+    session = DBSession()
+    # if 'username' not in login_session:
+    #   return redirect('/login')
+    genre = session.query(Genre).filter_by(id = genre_id).one()
+    bandToDelete = session.query(Band).filter_by(id = band_id).one() 
+    if request.method == 'POST':
+        session.delete(bandToDelete)
+        session.commit()
+        # flash('Menu Item Successfully Deleted')
+        return redirect(url_for('showBands', genre_id = genre_id))
+    else:
+        return render_template('genre/deleteConfirmation.html', band = bandToDelete)
 
 
 #route to shutdown the server
