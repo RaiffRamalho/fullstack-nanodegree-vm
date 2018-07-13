@@ -18,12 +18,7 @@ session = DBSession()
 @app.route('/genre')
 def showGenre():
     genres = session.query(Genre).all()
-    output = ''
-    for genre in genres:
-        output += genre.name
-        output += '</br>'
-    return output
-    # return render_template('music/genres.html')
+    return render_template('music/genres.html', genres=genres)
 
 
 #route to get bands of a genre
@@ -31,14 +26,20 @@ def showGenre():
 def genreBands(genre_id):
     genre = session.query(Genre).filter_by(id=genre_id).one()
     bands = session.query(Band).filter_by(genre_id=genre.id)
-    output = ''
-    for b in bands:
-        output += '</br>'
-        output += b.name
-        output += '</br>'
-        output += b.description
-        output += '</br>'
-    return output
+    return render_template('genre/bands.html',genre=genre, bands=bands)
+
+# @app.route('/restaurant/<int:restaurant_id>/new/', methods=['GET', 'POST'])
+# def newMenuItem(restaurant_id):
+#     if request.method == 'POST':
+#         newItem = MenuItem(
+#             name=request.form['name'], restaurant_id=restaurant_id)
+#         session.add(newItem)
+#         session.commit()
+#         return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+#     else:
+#         return render_template('newmenuitem.html', restaurant_id=restaurant_id)
+
+# , methods = ['GET', 'POST']
 
 
 

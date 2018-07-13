@@ -1,6 +1,17 @@
 <html>
 
-<body>
-    <h1>OK</h1>
-</body>
+    <body>
+
+        <h1>Genres</h1>
+        
+        {% for genre in genres %}
+        
+        <div>
+        
+        <p>{{genre.name}}</p>
+                
+        </div>
+        
+        {% endfor %}
+        </body>
 </html>
