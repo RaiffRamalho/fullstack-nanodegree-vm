@@ -3,15 +3,23 @@
     <body>
 
         <h1>Genres</h1>
-        
+        <a href="{{url_for('newGenre')}}">
+				<button class="btn btn-default" id="new-restaurant">
+					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Add Genre
+				</button>
+		</a>
         {% for genre in genres %}
         
         <div>
-        
-        <p>{{genre.name}}</p>
-                
-        </div>
-        
+
+            <p>{{genre.name}}</p>
+                    
+            </div>
+            <a href='{{url_for('editGenre', genre_id = genre.id) }}'>Edit</a>
+
+            </br>
+            <a href = '{{url_for('deleteGenre', genre_id = genre.id) }}'>Delete</a>
+            
         {% endfor %}
         </body>
 </html>
