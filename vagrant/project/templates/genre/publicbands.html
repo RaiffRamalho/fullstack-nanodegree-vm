@@ -1,0 +1,32 @@
+<html>
+
+<body>
+
+    <div class="col-md-2 text-right">
+            <a href="{{url_for('showLogin')}}">Click Here to Log in </a>
+    </div>
+
+    <div>
+        
+        <h1>{{genre.name}}</h1>
+        <figure class="creator">
+                <img src="{{ creator.picture}}">
+                <figcaption>{{ creator.name }}</figcaption>
+        </figure>
+
+    </div>
+
+    {% for band in bands %}
+
+        <div>
+
+            <p>{{band.name}}</p>
+
+            <p>{{band.description}}</p>
+
+        </div>
+
+    {% endfor %}
+</body>
+
+</html>
