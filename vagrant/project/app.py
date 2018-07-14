@@ -4,12 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, Genre, Band, User
 
-# New imports for this step
 from flask import session as login_session
 import random
 import string
 
-# IMPORTS FOR THIS STEP
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -114,7 +112,6 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
 
@@ -165,11 +162,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    session = DBSession()
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    session = DBSession()
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -195,11 +194,10 @@ def genreJSON(genre_id):
         genre_id=genre_id).all()
     return jsonify(Bands=[band.serialize for band in bands])
 
-#JSON for all genders
-
 #JSON APIs to view Genre Information
 @app.route('/genre/<int:genre_id>/bands/JSON')
 def genreBandsJSON(genre_id):
+    session = DBSession()
     genre = session.query(Genre).filter_by(id = genre_id).one()
     bands = session.query(Band).filter_by(genre_id = genre_id).all()
     return jsonify(Bands=[band.serialize for band in bands])
