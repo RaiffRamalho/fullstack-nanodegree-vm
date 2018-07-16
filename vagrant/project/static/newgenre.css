@@ -1,0 +1,16 @@
+body {
+    font-family: sans-serif;
+    background-color: #333333;
+}
+
+p {
+    color: #cccccc;
+    font-size: 1.8em;
+}
+
+h1 {
+    color: #ffffff;
+    border-bottom: 2px solid #eee;
+    font-family: 'georgia', serif;
+    margin: 0;
+}
