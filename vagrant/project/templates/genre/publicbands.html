@@ -1,32 +1,31 @@
 <html>
 
 <body>
-
-    <div class="col-md-2 text-right">
+    <head>
+            <link rel=stylesheet type=text/css href="{{ url_for('static', filename='main.css') }}">
+    </head>
+    <div class="login">
             <a href="{{url_for('showLogin')}}">Click Here to Log in </a>
     </div>
-
-    <div>
         
         <h1>{{genre.name}}</h1>
-        <figure class="creator">
+        <!-- <figure class="creator">
                 <img src="{{ creator.picture}}">
                 <figcaption>{{ creator.name }}</figcaption>
-        </figure>
+        </figure> -->
+    <div class = "center"> 
+        {% for band in bands %}
 
+            <div>
+
+                <p>{{band.name}}</p>
+
+                <p>{{band.description}}</p>
+
+            </div>
+
+        {% endfor %}
     </div>
-
-    {% for band in bands %}
-
-        <div>
-
-            <p>{{band.name}}</p>
-
-            <p>{{band.description}}</p>
-
-        </div>
-
-    {% endfor %}
 </body>
 
 </html>

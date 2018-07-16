@@ -15,6 +15,7 @@ import json
 from flask import make_response
 import requests
 
+
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///musicgenrewithusers.db')
