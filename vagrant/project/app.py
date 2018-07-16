@@ -246,7 +246,7 @@ def editGenre(genre_id ):
     if 'username' not in login_session:
         return redirect('/login')
     if editedGenre.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to edit this genre. Please create your own genre in order to edit.');}</script><body onload='myFunction()''>"
+        return "<script>function myFunction() {alert('You are not authorized to edit this genre. Please create your own genre in order to edit.');}</script><body onload='myFunction()''>" 
     if request.method == 'POST':
         if request.form['name']:
             editedGenre.name = request.form['name']

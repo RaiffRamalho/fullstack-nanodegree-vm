@@ -1,19 +1,22 @@
 <html>
+        <head>
+            <link rel=stylesheet type=text/css href="{{ url_for('static', filename='newgenre.css') }}">
+        </head>
 <body>
 <h1> New Band of {{genre.name}}</h1>
 
-<form action="{{url_for('newBand', genre_id=genre.id )}}" method = 'POST'>
+    <form action="{{url_for('newBand', genre_id=genre.id )}}" method = 'POST'>
 
 
-    <label for="name">Name:</label>
-    <input type ="text" maxlength="50" class="form-control" name="name"placeholder="Name of the Band">
+        <p>Name:</p>
+        <input type ="text" maxlength="50" class="form-control" name="name"placeholder="Name of the Band">
 
-    <label for="description">Description:</label>
-    <textarea class="form-control" maxlength="250" rows="3" name="description" placeholder="Description of the Band"></textarea>
+        <p>Description:</p>
+        <textarea class="form-control" maxlength="250" rows="3" name="description" placeholder="Description of the Band"></textarea>
 
-<input type='submit' value='Create'>
+        <input type='submit' value='Create'>
 
-</form>
+    </form>
 
 </body>
 </html>

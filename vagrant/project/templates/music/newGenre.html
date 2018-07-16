@@ -1,19 +1,19 @@
 <html>
-<head>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='newgenre.css') }}">
-</head>
-<body>
-<h1> New Genre </h1>
+    <head>
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='newgenre.css') }}">
+    </head>
+    <body>
+        <h1> New Genre </h1>
 
-<form action="{{url_for('newGenre')}}" method = 'POST'>
+        <form action="{{url_for('newGenre')}}" method = 'POST'>
 
-<p>Name:</p>
+            <p>Name:</p>
 
-<input type='text' size='30' name='name'>
+            <input type='text' size='30' name='name'>
 
-<input type='submit' value='Create'>
+            <input type='submit' value='Create'>
 
-</form>
+        </form>
 
-</body>
+    </body>
 </html>
