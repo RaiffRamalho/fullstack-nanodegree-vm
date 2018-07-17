@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask import Flask, render_template, request
+from flask import redirect, url_for, jsonify, flash
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -23,9 +24,11 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 
+
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Project Music Genre Application"
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
@@ -79,8 +82,10 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'),
+            200
+            )
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -112,7 +117,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width:300px; height:300px;border-radius:150px;'
+    output += '-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     print "done!"
     return output
 
@@ -122,15 +128,19 @@ def gconnect():
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session.get('access_token')
+    oauth2uri = 'https://accounts.google.com/o/oauth2/revoke?token=%s'
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(json.dumps(
+            'Current user not connected.'),
+            401
+            )
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = oauth2uri % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -141,11 +151,17 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response = make_response(
+            json.dumps('Successfully disconnected.'),
+            200
+            )
         response.headers['Content-Type'] = 'application/json'
-        return response
+        session = DBSession()
+        genres = session.query(Genre).all()
+        return render_template('music/publicgenres.html', genres=genres)
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -177,7 +193,6 @@ def getUserID(email):
         return None
 
 
-
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -187,7 +202,7 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 
-#JSON for all genders
+# JSON for all genders
 @app.route('/genre/<int:genre_id>/JSON')
 def genreJSON(genre_id):
     session = DBSession()
@@ -196,16 +211,17 @@ def genreJSON(genre_id):
         genre_id=genre_id).all()
     return jsonify(Bands=[band.serialize for band in bands])
 
-#JSON APIs to view Genre Information
+
+# JSON APIs to view Genre Information
 @app.route('/genre/<int:genre_id>/bands/JSON')
 def genreBandsJSON(genre_id):
     session = DBSession()
-    genre = session.query(Genre).filter_by(id = genre_id).one()
-    bands = session.query(Band).filter_by(genre_id = genre_id).all()
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    bands = session.query(Band).filter_by(genre_id=genre_id).all()
     return jsonify(Bands=[band.serialize for band in bands])
 
 
-#home route show all bands
+# home route show all bands
 @app.route('/')
 @app.route('/genre')
 def showGenre():
@@ -215,15 +231,16 @@ def showGenre():
         return render_template('music/publicgenres.html', genres=genres)
     else:
         return render_template('music/genres.html', genres=genres)
-    
 
-#route to get bands of a genre
+
+# route to get bands of a genre
 @app.route('/genre/<int:genre_id>/')
 def genreBands(genre_id):
     session = DBSession()
     genre = session.query(Genre).filter_by(id=genre_id).one()
     bands = session.query(Band).filter_by(genre_id=genre.id)
-    return render_template('genre/bands.html',genre=genre, bands=bands)
+    return render_template('genre/bands.html', genre=genre, bands=bands)
+
 
 @app.route('/genre/new/', methods=['GET', 'POST'])
 def newGenre():
@@ -231,7 +248,10 @@ def newGenre():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
-        newGenre = Genre(name=request.form['name'], user_id=login_session['user_id'])
+        newGenre = Genre(
+            name=request.form['name'],
+            user_id=login_session['user_id']
+            )
         session.add(newGenre)
         session.commit()
         return redirect(url_for('showGenre'))
@@ -240,21 +260,26 @@ def newGenre():
 
 
 @app.route('/genre/<int:genre_id>/edit/', methods=['GET', 'POST'])
-def editGenre(genre_id ):
+def editGenre(genre_id):
     session = DBSession()
-    editedGenre = session.query(Genre).filter_by(id = genre_id).one()
+    editedGenre = session.query(Genre).filter_by(id=genre_id).one()
     if 'username' not in login_session:
         return redirect('/login')
     if editedGenre.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to edit this genre. Please create your own genre in order to edit.');}</script><body onload='myFunction()''>" 
+        returnurl = ""
+        returnurl += "<script>function myFunction() {alert('You are not "
+        returnurl += "authorized to edit this genre."
+        returnurl += " Please create your own genre in order to edit.')"
+        returnurl += ";}</script><body onload='myFunction()''>"
+        return returnurl
     if request.method == 'POST':
         if request.form['name']:
             editedGenre.name = request.form['name']
         session.add(editedGenre)
-        session.commit() 
+        session.commit()
         return redirect(url_for('showGenre'))
     else:
-        return render_template('music/editGenre.html', genre = editedGenre)
+        return render_template('music/editGenre.html', genre=editedGenre)
 
 
 @app.route('/genre/<int:genre_id>/delete/', methods=['GET', 'POST'])
@@ -264,90 +289,142 @@ def deleteGenre(genre_id):
     if 'username' not in login_session:
         return redirect('/login')
     if genreToDelete.user_id != login_session['user_id']:
-        return "<script>function myFunction() {alert('You are not authorized to delete this genre. Please create your own genre in order to delete.');}</script><body onload='myFunction()''>"
+        returnurl = ""
+        returnurl += "<script>function myFunction() {alert('You are not "
+        returnurl += "authorized to delete this genre. Please"
+        returnurl += "create your own genre in order to delete.');"
+        returnurl += "}</script><body onload='myFunction()''>"
+        return returnurl
     if request.method == 'POST':
         session.delete(genreToDelete)
         session.commit()
         return redirect(url_for('showGenre'))
     else:
-        return render_template('music/deleteconfirmation.html', genre=genreToDelete)
+        return render_template(
+                                'music/deleteconfirmation.html',
+                                genre=genreToDelete
+                                )
 
-#Show a genre bands
+
+# Show a genre bands
 @app.route('/genre/<int:genre_id>/')
 @app.route('/genre/<int:genre_id>/bands/')
 def showBands(genre_id):
     session = DBSession()
-    genre = session.query(Genre).filter_by(id = genre_id).one()
+    genre = session.query(Genre).filter_by(id=genre_id).one()
     creator = getUserInfo(genre.user_id)
-    bands = session.query(Band).filter_by(genre_id = genre_id).all()
-    if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('genre/publicbands.html', bands = bands, genre = genre, creator = creator)
+    bands = session.query(Band).filter_by(genre_id=genre_id).all()
+    logsess_user = login_session['user_id']
+    if 'username' not in login_session or creator.id != logsess_user:
+        return render_template(
+                                'genre/publicbands.html',
+                                bands=bands,
+                                genre=genre,
+                                creator=creator)
     else:
-        return render_template('genre/bands.html', bands = bands, genre = genre,creator = creator)
+        return render_template(
+                                'genre/bands.html',
+                                bands=bands,
+                                genre=genre,
+                                creator=creator)
 
-#Create a new band
-@app.route('/genre/<int:genre_id>/bands/new/',methods=['GET','POST'])
+
+# Create a new band
+@app.route('/genre/<int:genre_id>/bands/new/', methods=['GET', 'POST'])
 def newBand(genre_id):
     session = DBSession()
     if 'username' not in login_session:
         return redirect('/login')
-    genre = session.query(Genre).filter_by(id = genre_id).one()
+    genre = session.query(Genre).filter_by(id=genre_id).one()
     if login_session['user_id'] != genre.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to add bands to this genre. Please create your own genre in order to add bands.');}</script><body onload='myFunction()''>"
+        returnurl = ""
+        returnurl += "<script>function myFunction() {alert('You are not "
+        returnurl += "authorized to add bands to this genre. Please"
+        returnurl += "create your own genre in order to add bands.');"
+        returnurl += " }</script><body onload='myFunction()''>"
+        return returnurl
     if request.method == 'POST':
-        newBand = Band(name = request.form['name'], description = request.form['description'],
-        genre_id = genre_id,user_id=genre.user_id)
+        newBand = Band(
+                        name=request.form['name'],
+                        description=request.form['description'],
+                        genre_id=genre_id,
+                        user_id=genre.user_id
+                        )
         session.add(newBand)
         session.commit()
-        return redirect(url_for('showBands', genre_id = genre_id))
+        return redirect(url_for('showBands', genre_id=genre_id))
     else:
-        return render_template('genre/newBand.html', genre = genre)
+        return render_template('genre/newBand.html', genre=genre)
 
 
-#Edit a band
-@app.route('/genre/<int:genre_id>/bands/<int:band_id>/edit', methods=['GET','POST'])
+# Edit a band
+@app.route(
+        '/genre/<int:genre_id>/bands/<int:band_id>/edit',
+        methods=['GET', 'POST']
+        )
 def editBand(genre_id, band_id):
     session = DBSession()
     if 'username' not in login_session:
-      return redirect('/login')
-    editedBand = session.query(Band).filter_by(id = band_id).one()
-    genre = session.query(Genre).filter_by(id = genre_id).one()
+        return redirect('/login')
+    editedBand = session.query(Band).filter_by(id=band_id).one()
+    genre = session.query(Genre).filter_by(id=genre_id).one()
     if login_session['user_id'] != genre.user_id:
-            return "<script>function myFunction() {alert('You are not authorized to edit bands to this genre. Please create your own genre in order to edit bands.');}</script><body onload='myFunction()''>"
+        returnurl = ""
+        returnurl += "<script>function myFunction() {alert('You are not "
+        returnurl += "authorized to edit bands to this genre. Please"
+        returnurl += "create your own genre in order to edit bands.');"
+        returnurl += "}</script><body onload='myFunction()''>"
+        return returnurl
     if request.method == 'POST':
         if request.form['name']:
             editedBand.name = request.form['name']
         if request.form['description']:
             editedBand.description = request.form['description']
         session.add(editedBand)
-        session.commit() 
-        return redirect(url_for('showBands', genre_id = genre_id))
+        session.commit()
+        return redirect(url_for('showBands', genre_id=genre_id))
     else:
-        return render_template('genre/editBand.html', genre_id = genre_id, band = editedBand)
+        return render_template(
+                                'genre/editBand.html',
+                                genre_id=genre_id,
+                                band=editedBand
+                                )
 
-#Delete a band
-@app.route('/genre/<int:genre_id>/bands/<int:band_id>/delete', methods = ['GET','POST'])
-def deleteBand(genre_id,band_id):
+
+# Delete a band
+@app.route(
+        '/genre/<int:genre_id>/bands/<int:band_id>/delete',
+        methods=['GET', 'POST']
+        )
+def deleteBand(genre_id, band_id):
     session = DBSession()
-    genre = session.query(Genre).filter_by(id = genre_id).one()
-    bandToDelete = session.query(Band).filter_by(id = band_id).one() 
+    genre = session.query(Genre).filter_by(id=genre_id).one()
+    bandToDelete = session.query(Band).filter_by(id=band_id).one()
     if 'username' not in login_session:
-          return redirect('/login')
+        return redirect('/login')
     if login_session['user_id'] != genre.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to edit bands to this genre. Please create your own genre in order to edit bands.');}</script><body onload='myFunction()''>"
+        returnurl = ""
+        returnurl += "<script>function myFunction() {alert('You are not "
+        returnurl += "authorized to edit bands to this genre. Please "
+        returnurl += "create your own genre in order to edit bands.');"
+        returnurl += "}</script><body onload='myFunction()''>"
+        return returnurl
     if request.method == 'POST':
         session.delete(bandToDelete)
         session.commit()
-        return redirect(url_for('showBands', genre_id = genre_id))
+        return redirect(url_for('showBands', genre_id=genre_id))
     else:
-        return render_template('genre/deleteConfirmation.html', band = bandToDelete)
+        return render_template(
+                                'genre/deleteConfirmation.html',
+                                band=bandToDelete)
 
 
-#route to shutdown the server
+# route to shutdown the server
 @app.route('/shutdown')
 def shutdown():
     shutdown_server()
     return 'Server shutting down...'
+
 
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')

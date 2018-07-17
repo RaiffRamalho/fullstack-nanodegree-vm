@@ -5,17 +5,17 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = 'user'
-
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
     picture = Column(String(250))
 
+
 class Genre(Base):
     __tablename__ = 'genre'
-   
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
@@ -23,35 +23,33 @@ class Genre(Base):
 
     @property
     def serialize(self):
-       """Return object data in easily serializeable format"""
-       return {
-           'name'         : self.name,
-           'id'           : self.id,
-       }
+        """Return object data in easily serializeable format"""
+        return {
+            'name': self.name,
+            'id': self.id,
+        }
+
 
 class Band(Base):
     __tablename__ = 'band'
-
-
-    name =Column(String(80), nullable = False)
-    id = Column(Integer, primary_key = True)
+    name = Column(String(80), nullable=False)
+    id = Column(Integer, primary_key=True)
     description = Column(String(250))
-    genre_id = Column(Integer,ForeignKey('genre.id'))
+    genre_id = Column(Integer, ForeignKey('genre.id'))
     genre = relationship(Genre)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
-
     @property
     def serialize(self):
-       """Return object data in easily serializeable format"""
-       return {
-           'name'         : self.name,
-           'description'         : self.description,
-           'id'         : self.id,
-       }
+        """Return object data in easily serializeable format"""
+        return {
+            'name': self.name,
+            'description': self.description,
+            'id': self.id,
+        }
 
 
-engine = create_engine('sqlite:///musicgenrewithusers.db') 
+engine = create_engine('sqlite:///musicgenrewithusers.db')
 
 Base.metadata.create_all(engine)

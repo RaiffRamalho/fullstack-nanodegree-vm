@@ -21,7 +21,7 @@ session = DBSession()
 
 # Create dummy user
 User1 = User(name="Robo Barista", email="tinnyTim@udacity.com",
-             picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
+             picture='https://pbs.twx400.png')
 session.add(User1)
 session.commit()
 
@@ -31,18 +31,26 @@ genre1 = Genre(user_id=1, name="Pop")
 session.add(genre1)
 session.commit()
 
-band1 = Band(user_id=1, name="Michael Jackson", description="king of pop", genre=genre1)
+band1 = Band(
+  user_id=1,
+  name="Michael Jackson",
+  description="king of pop",
+  genre=genre1
+  )
 
 session.add(band1)
 session.commit()
 
 
-band2 = Band(user_id=1, name="Nsycn", description="famous boy band", genre=genre1)
+band2 = Band(
+  user_id=1,
+  name="Nsycn",
+  description="famous boy band",
+  genre=genre1
+  )
 
 session.add(band2)
 session.commit()
-
-
 
 # bands for rock
 genre2 = Genre(user_id=1, name="Rock")
@@ -50,13 +58,23 @@ genre2 = Genre(user_id=1, name="Rock")
 session.add(genre2)
 session.commit()
 
-band3 = Band(user_id=1, name="The strokes", description="Natural rock", genre=genre2)
+band3 = Band(
+  user_id=1,
+  name="The strokes",
+  description="Natural rock",
+  genre=genre2
+  )
 
 session.add(band3)
 session.commit()
 
 
-band4 = Band(user_id=1, name="Beatles", description="King of rock", genre=genre2)
+band4 = Band(
+  user_id=1,
+  name="Beatles",
+  description="King of rock",
+  genre=genre2
+  )
 
 session.add(band4)
 session.commit()

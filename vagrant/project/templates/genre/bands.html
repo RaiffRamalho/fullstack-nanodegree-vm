@@ -4,15 +4,17 @@
         </head>
 <body>
 
-<h1>{{genre.name}}</h1>
+    <h1>{{genre.name}}</h1>
 
-<a href="{{url_for('newBand', genre_id=genre.id)}}">
-        <button class="btn btn-default" id="new-restaurant">
-            <span class="glyphicon glyphicon-cutlery" aria-hidden="true">Add Band</span>
-        </button>
-</a>
+    <a href="{{url_for('newBand', genre_id=genre.id)}}">
+            <button class="btn btn-default" id="new-restaurant">
+                <span class="glyphicon glyphicon-cutlery" aria-hidden="true">Add Band</span>
+            </button>
+    </a>
+    <a style="float:right;" href="{{url_for('gdisconnect')}}">Click Here to Log out </a>
 
-{% for band in bands %}
+    <h3>Latest bands</h3>
+    {% for band in bands %}
 
     <div>
 
@@ -28,7 +30,7 @@
     </div>
 
 
-{% endfor %}
+    {% endfor %}
 </body>
 
 </html>

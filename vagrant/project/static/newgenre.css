@@ -8,7 +8,7 @@ p {
     font-size: 1.8em;
 }
 
-h1 {
+h1,h3 {
     color: #ffffff;
     border-bottom: 2px solid #eee;
     font-family: 'georgia', serif;
