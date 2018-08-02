@@ -24,7 +24,7 @@
         <div id="signinButton" class="btn-div" style="text-align:center;">
           <span class="g-signin"
             data-scope="openid email"
-            data-clientid="449424591881-fr06sm3nf6ig4emdhgm7a27ts71b172e.apps.googleusercontent.com"
+            data-clientid="191355778882-102ld24r814grfl87i1kndlc1fo1bngb.apps.googleusercontent.com"
             data-redirecturi="postmessage"
             data-accesstype="offline"
             data-cookiepolicy="single_host_origin"
@@ -32,6 +32,7 @@
             data-approvalprompt="force">
           </span>
         </div>
+        <div id="result"></div>
 
 <!--END GOOGLE PLUS SIGN IN BUTTON -->
 
@@ -56,11 +57,11 @@
                   window.location.href = "/genre";
                  }, 2000);
                   
-              } else if (authResult['error']) {
-            console.log('There was an error: ' + authResult['error']);
-          } else {
-                $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-                 }
+                } else if (authResult['error']) {
+                  console.log('There was an error: ' + authResult['error']);
+                } else {
+                    $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                }
               }
               
           }); } }
